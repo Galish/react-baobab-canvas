@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "scripts": {
+    "server": "nodemon server",
+    "start": "nwb serve --auto-install --fallback --reload --port=8080"
+  },
+  "dependencies": {
+    "app": "^0.1.0",
+    "baobab": "^2.3.3",
+    "config": "^1.19.0",
+    "cors": "^2.7.1",
+    "history": "^1.17.0",
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7",
+    "react-router": "^1.0.3",
+    "src": "^1.1.2"
+  },
+  "devDependencies": {
+    "express": "~4.13.4",
+    "nodemon": "^1.8.1",
+    "nwb": "^0.7.2"
+  }
+}
