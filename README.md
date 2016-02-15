@@ -48,9 +48,9 @@ able to select a new image for conversion.
 The API server will be run on port `:9000`. The application server will be run
 on port `:8080`. Commands `3.` & `4.` should be run within separate terminals.
 
-`
+```
 npm i
 npm i -g nwb
 npm run server
 npm start
-`
+```
