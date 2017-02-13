@@ -1,27 +1,25 @@
-import {React, branch} from '../vendor';
-import { Link } from 'react-router';
+import {branch} from 'react-baobab';
+import {Link} from 'react-router';
+import React from 'react'
 
 @branch({
-  cursors: {
-    menu: ['menu']
-  }
+	menu: ['menu']
 })
-
-export default class extends React.Component{
+export default class extends React.Component {
+	renderItem = ({link, title}) => {
+		return (
+			<Link activeClassName="active"
+				className="item"
+				key={link}
+				to={link}>
+				{title}
+			</Link>
+		)
+	}
 	render () {
 		return (
 			<div className="ui pointing menu">
-				{ this.props.menu.map( menuitem => <MenuItem title={menuitem.title} link={menuitem.link} key={menuitem.title} />) }
-			</div>
-		)
-	}
-}
-
-class MenuItem extends React.Component {
-	render () {
-		return (
-			<div>
-				<Link to={ this.props.link } className="item" activeClassName="active">{ this.props.title }</Link>				
+				{this.props.menu.map(menuitem => this.renderItem(menuitem))}
 			</div>
 		)
 	}

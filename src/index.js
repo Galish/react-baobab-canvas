@@ -1,17 +1,22 @@
-import {React, render, ReactRouter, Root} from './vendor';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import View from './components/view'
 import Canvas from './components/canvas';
 import Statistic from './components/statistic';
-import createHistory from 'history/lib/createHashHistory';
-import tree from './state';
-const {Router, Route, Redirect, BrowserHistory} = ReactRouter;
+import {browserHistory, IndexRedirect, Redirect, Route, Router} from 'react-router'
+import tree from './common/state';
+import {root} from 'baobab-react/higher-order'
 
-render(
-	<Root tree={tree}>
-		<Router history={ createHistory({ queryKey: false }) }>
-			<Redirect from="/" to="canvas/" />
+const RootedApp = root(tree, View)
+
+ReactDOM.render(
+	<Router history={browserHistory}>
+		<Route path='/' component={RootedApp}>
+			<IndexRedirect to="/canvas" />
 			<Route path="canvas" component={Canvas} />
 			<Route path="statistics" component={Statistic} />
-		</Router>
-	</Root>,	
-	app //document.querySelector('#app')
+			<Redirect from="*" to="/canvas" />
+		</Route>
+	</Router>,
+	document.getElementById('app')
 );

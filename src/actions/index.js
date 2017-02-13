@@ -1,17 +1,16 @@
 import request from 'superagent';
-import tree from '../state';
-import config from '../config';
+import tree from '../common/state';
+import config from '../common/config';
 
 export default {
-	getColorSvg: ( hex ) => {
+	getColorSvg: (hex) => {
 		return new Promise ((resolve, reject) => {
 			const req = request
 			.get('http://localhost:9000/colors/' + hex)
-			//.withCredentials()
 			.set('Accept', 'image/svg+xml')
 			.end(function(err, res){
-				if( res.status == '200' ) {
-					tree.set(['svg', hex], res.text); //tree.select('svg').set(hex, res.text);				
+				if (res.status === 200) {
+					tree.set(['svg', hex], res.text);
 					resolve(res.text);
 				} else {
 					reject('error');
@@ -25,14 +24,13 @@ export default {
 			let img = new Image();
 			img.src =  src;
 			img.onload = () => {
-
 				const {src, height, width} = img;
 				tree.set('image', {src, height, width});
 
-	            const scaleWidth = Math.ceil(img.width/config.TILE_WIDTH),
-	            	  scalex = scaleWidth/img.width,
-	            	  scaleHeight = Math.ceil(img.height/config.TILE_HEIGHT),
-	            	  scaley = scaleHeight/img.height;
+				const scaleWidth = Math.ceil(img.width/config.TILE_WIDTH);
+				const scalex = scaleWidth/img.width;
+				const scaleHeight = Math.ceil(img.height/config.TILE_HEIGHT);
+				const scaley = scaleHeight/img.height;
 
 	            // scaled image sizes
 	            tree.set('scaled', {
@@ -48,8 +46,8 @@ export default {
 					width: (scaleWidth * config.TILE_WIDTH),
 					data: []
 				});
-				
-				tree.set('status', 'loaded');				
+
+				tree.set('status', 'loaded');
 				tree.set(["progress", "bar"], 0);
 
 				resolve(img);
@@ -59,9 +57,11 @@ export default {
 
 	getScaledImageData: (context) => {
 		return new Promise ((resolve, reject) => {
-			let imageData =  Array.from(context.getImageData(0, 0, tree.select('scaled', 'width').get(), tree.select('scaled', 'height').get()).data);
+			const cursorScaled = tree.select('scaled');
+			const {height, width} = cursorScaled.get()
+			const imageData =  Array.from(context.getImageData(0, 0, width, height).data);
 
-			tree.set(['scaled', 'data'], imageData);			
+			cursorScaled.set('data', imageData);
 			tree.set('status', 'ready');
 
 			resolve(imageData);
@@ -73,37 +73,39 @@ export default {
 	},
 
 	setColorStat: (hex) => {
-		const statColors = tree.select('stat', 'colors'),
-			  statTotal = tree.select('stat', 'total');
+		const statColors = tree.select('stat', 'colors');
+		const statTotal = tree.select('stat', 'total');
 
-		if (!statColors.get(hex)) 
+		if (!statColors.get(hex)) {
 			statColors.set(hex, 1);
-		else 
+		} else {
 			statColors.set(hex, statColors.get(hex) + 1);
+		}
 
-		if (!statTotal.get()) 
+		if (!statTotal.get()) {
 			statTotal.set(1);
-		else 
+		} else {
 			statTotal.set(statTotal.get() + 1);
+		}
 	},
 
 	saveDrawResults: (data) => {
-		const arrData = Array.from(data),
-			  mosaicData = tree.select('mosaic', 'data');
+		const arrData = Array.from(data);
+		const mosaicData = tree.select('mosaic', 'data');
 
-		if (mosaicData.get())
+		if (mosaicData.get()) {
 			mosaicData.set(mosaicData.get().concat(arrData));
-		else
+		} else {
 			mosaicData.set(arrData);
+		}
 	},
 
 	setProgress: (x, y) => {
-		const cursorScaled = tree.select("scaled"),
-			  total = cursorScaled.get('width') * cursorScaled.get('height'),
-			  step = x + y * cursorScaled.get('width'),
-			  bar =  Math.round(step / total *100);
+		const cursorScaled = tree.select("scaled");
+		const total = cursorScaled.get('width') * cursorScaled.get('height');
+		const step = x + y * cursorScaled.get('width');
+		const bar =  Math.round(step / total *100);
 
 		tree.set("progress", {bar, x, y});
 	}
-
 }

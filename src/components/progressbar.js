@@ -1,18 +1,22 @@
-import {React, branch} from '../vendor';
+import {branch} from 'react-baobab';
+import cx from 'classnames'
+import React from 'react';
 
 @branch({
-  cursors: {
-  	status: ['status'],
-    progress: ['progress']
-  }
+	status: ['status'],
+	progress: ['progress']
 })
-
 export default class extends React.Component {
 	render () {
-		let className = "progressbar";
-		if( this.props.status == 'render' ) className += " show";
+		const {progress, status} = this.props
+
 		return (
-			<div className={className}><span>{ this.props.progress.bar ? this.props.progress.bar + "%" : "" }</span></div>
+			<div className={cx('progressbar', {
+				'show': status === 'render'
+			})}><span>
+					{progress.bar ? `${progress.bar}%` : '' }
+				</span>
+			</div>
 		)
 	}
 }

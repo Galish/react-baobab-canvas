@@ -1,6 +1,6 @@
 'use strict';
 const util = require('util');
-const config = require('../src/config');
+const config = require('../src/common/config');
 const reHexColor = new RegExp(/^[0-9a-f]{6}$/i);
 
 const svgTemplate = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="%d" height="%d">
