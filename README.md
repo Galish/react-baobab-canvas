@@ -3,6 +3,10 @@ React-Baobab-Canvas
 
 React 0.14, React Router 1.0, ES6/ES7, HTML, CSS/Semantic UI, REST API, Express 4.0
 
+### Live demo
+
+http://galish.github.io/react-baobab-canvas/
+
 ### Implement a React application
 
 The application should be implemented with React, ES6/ES7. BaobabJS should be
