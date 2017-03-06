@@ -6,17 +6,16 @@ const SERVER_URI = 'https://glacial-depths-22749.herokuapp.com'; //http://localh
 export default {
 	getColorSvg: (hex) => {
 		return new Promise ((resolve, reject) => {
-			const req = request
-			.get(`${SERVER_URI}/colors/${hex}`)
-			.set('Accept', 'image/svg+xml')
-			.end(function(err, res){
-				if (res.status === 200) {
-					tree.set(['svg', hex], res.text);
-					resolve(res.text);
-				} else {
-					reject('error');
-				}
-			});
+			request.get(`${SERVER_URI}/colors/${hex}`)
+				.set('Accept', 'image/svg+xml')
+				.end(function(err, res){
+					if (res.status === 200) {
+						tree.set(['svg', hex], res.text);
+						resolve(res.text);
+					} else {
+						reject('error');
+					}
+				});
 		});
 	},
 

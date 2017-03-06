@@ -14,7 +14,12 @@ export default class extends React.Component {
 			<div className={cx('progressbar', {
 				'show': status === 'render'
 			})}><span>
-					{progress.bar ? `${progress.bar}%` : '' }
+					<div className="loader">
+						<i className="loader__icon" />
+					</div>
+					{progress.bar
+						? `${progress.bar}%`
+						: '0%'}
 				</span>
 			</div>
 		)
