@@ -1,21 +1,21 @@
 import request from 'superagent';
 import tree from '../common/state';
 import config from '../common/config';
+const SERVER_URI = 'http://localhost:9000';
 
 export default {
 	getColorSvg: (hex) => {
 		return new Promise ((resolve, reject) => {
-			const req = request
-			.get('http://localhost:9000/colors/' + hex)
-			.set('Accept', 'image/svg+xml')
-			.end(function(err, res){
-				if (res.status === 200) {
-					tree.set(['svg', hex], res.text);
-					resolve(res.text);
-				} else {
-					reject('error');
-				}
-			});
+			request.get(`${SERVER_URI}/colors/${hex}`)
+				.set('Accept', 'image/svg+xml')
+				.end(function(err, res){
+					if (res.status === 200) {
+						tree.set(['svg', hex], res.text);
+						resolve(res.text);
+					} else {
+						reject('error');
+					}
+				});
 		});
 	},
 

@@ -23,7 +23,7 @@ export default class extends React.Component {
 	componentDidMount () {
 		const status = this.props.status;
 
-		if (status == 'render' || status == 'done') {
+		if (status === 'render' || status === 'done') {
 			this.renderToCanvasFromCashe();
 		}
 	}
@@ -62,7 +62,7 @@ export default class extends React.Component {
 			y = imgY || 0;
 
 		// set canvas sizes and clear it
-		if (x == 0 && y == 0) {
+		if (x === 0 && y === 0) {
 			const canvas = document.getElementById(elements.canvas);
 			const context = canvas.getContext('2d');
 
@@ -151,17 +151,17 @@ export default class extends React.Component {
 
 		let imgData = new Uint8ClampedArray(mosaic.data);
 
-		if (status == 'done') {
+		if (status === 'done') {
 			height = mosaic.height;
 		} else {
 			height = progress.y * config.TILE_HEIGHT;
 		}
 
-		let imageData = new ImageData (imgData,  mosaic.width, height);
+		imgData.length && context.putImageData(
+			new ImageData(imgData,  mosaic.width, height), 0, 0
+		);
 
-		context.putImageData(imageData, 0, 0);
-
-		if (status == 'render') {
+		if (status === 'render') {
 			Actions.setProgress(0, progress.y);
 			this.renderToCanvas(0, progress.y);
 		}
@@ -176,11 +176,9 @@ export default class extends React.Component {
 				resolve(svg[hex]);
 			} else {
 				Actions.getColorSvg(hex)
-					.then(
-						svg => {
-							resolve(svg);
-						}
-					);
+					.then(svg => {
+						resolve(svg);
+					});
 			}
 		});
 	}
@@ -189,24 +187,39 @@ export default class extends React.Component {
 		return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
 	}
 
+	renderMessage = () =>
+		<div className="canvas__validation">
+			<div className="loader">
+				<i className="loader__icon" />
+			</div>
+			Waiting for server response
+		</div>
+
 	render () {
-		const {mosaic, scaled, elements, status} = this.props;
-		const isRendering = status == 'render';
-		const isDone = status == 'done';
+		const {elements, mosaic, progress, scaled, status, svg} = this.props;
+		const isRendering = status === 'render';
+		const isDone = status === 'done';
+		const isRequest = !progress.bar && status === 'render' && !Object.keys(svg).length;
 
 		return (
-			<div className="canvas__container">
-				<canvas className={cx({
-					'show': isRendering || isDone
-				})}	id={elements.canvas}
-					height={scaled.height}
-					width={scaled.width} />
+			<div className={cx('canvas__container', {
+				'is-active': !isRequest
+			})}>
+				<div className="canvas__inner">
+					<canvas className={cx({
+						'show': isRendering || isDone
+					})}	id={elements.canvas}
+						height={scaled.height}
+						width={scaled.width} />
 
-				<canvas id={elements.buffer}
-					height={config.TILE_HEIGHT}
-					width={mosaic.width} />
+					<canvas id={elements.buffer}
+						height={config.TILE_HEIGHT}
+						width={mosaic.width} />
 
-				<ProgressBar />
+					<ProgressBar />
+				</div>
+
+				{isRequest && this.renderMessage()}
 			</div>
 		)
 	}
